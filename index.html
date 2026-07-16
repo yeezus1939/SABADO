@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan para el sábado</title>
+  <style>
+    :root { --ink:#f7f3ff; --muted:#c5bdd7; --violet:#9d6cff; --pink:#ff6ba7; --panel:rgba(25,17,43,.76); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:#120a25 radial-gradient(circle at 12% 12%,#59319b 0,transparent 31%),radial-gradient(circle at 87% 85%,#8e275d 0,transparent 32%); padding:24px; }
+    main { width:min(960px,100%); }
+    .screen { display:none; background:var(--panel); border:1px solid rgba(255,255,255,.16); box-shadow:0 24px 70px rgba(0,0,0,.35); border-radius:28px; overflow:hidden; backdrop-filter:blur(12px); }
+    .screen.active { display:block; animation:appear .45s ease-out; }
+    .intro { max-width:580px; margin:auto; padding:48px 34px; text-align:center; }
+    .eyebrow { color:#f0beff; text-transform:uppercase; letter-spacing:.15em; font-weight:700; font-size:.76rem; }
+    h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.04; margin:16px 0 10px; }
+    h2 { margin:0; font-size:clamp(1.7rem,4vw,2.75rem); }
+    .date { color:var(--muted); font-size:1.05rem; margin:0 0 30px; }
+    .answers { display:grid; gap:13px; }
+    button { appearance:none; font:inherit; cursor:pointer; transition:transform .18s, background .18s, border-color .18s; }
+    .answer { text-align:left; padding:18px 20px; color:var(--ink); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:16px; }
+    .answer:hover { transform:translateY(-2px); background:rgba(157,108,255,.24); border-color:#b78eff; }
+    .plans-head { padding:42px 38px 25px; text-align:center; }
+    .plans-head p { color:var(--muted); margin:9px 0 0; }
+    .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; padding:0 28px 30px; }
+    .plan { min-height:420px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.2); border-radius:20px; background:#251540; text-align:left; color:white; padding:0; }
+    .plan img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; opacity:.8; transition:transform .4s ease; }
+    .plan::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(11,4,22,.94),rgba(11,4,22,.05) 72%); }
+    .plan:hover img { transform:scale(1.06); }
+    .plan:hover { border-color:#fff; transform:translateY(-4px); }
+    .plan-content { position:absolute; z-index:1; left:25px; right:25px; bottom:25px; }
+    .tag { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.18); font-size:.76rem; font-weight:700; letter-spacing:.05em; }
+    h3 { font-size:1.75rem; margin:12px 0 5px; }
+    .plan-content p { margin:0; color:#eee6fa; }
+    .confirmation { max-width:590px; padding:52px 35px; margin:auto; text-align:center; }
+    .confirmation p { color:var(--muted); font-size:1.08rem; line-height:1.55; }
+    .location { padding:15px; border-radius:14px; background:rgba(255,255,255,.09); color:#f5eaff!important; }
+    .send { width:100%; margin-top:16px; padding:16px; border:0; border-radius:14px; font-weight:800; color:#092a16; background:#5fe18b; }
+    .send:hover { transform:translateY(-2px); background:#7af0a2; }
+    .back { margin-top:17px; color:var(--muted); background:transparent; border:0; text-decoration:underline; }
+    @keyframes appear { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    @media (max-width:620px) { body { padding:14px; } .cards { grid-template-columns:1fr; padding:0 16px 20px; } .plan { min-height:300px; } .plans-head { padding:32px 20px 22px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="welcome" class="screen active intro">
+      <p class="eyebrow">Una invitación especial</p>
+      <h1>Hola, ¿qué harás el día sábado?</h1>
+      <p id="saturday" class="date"></p>
+      <div class="answers">
+        <button class="answer" type="button">Estaré ocupada</button>
+        <button class="answer" type="button" onclick="showPlans()">No lo sé, pero me interesa saber por qué</button>
+      </div>
+    </section>
+
+    <section id="plans" class="screen">
+      <header class="plans-head">
+        <p class="eyebrow">Perfecto, entonces...</p>
+        <h2>¿Qué quieres hacer el sábado?</h2>
+        <p>Elige el plan que más te antoje.</p>
+      </header>
+      <div class="cards">
+        <button class="plan" type="button" onclick="choose('Boomerang Arcade','Boomerang Arcade')">
+          <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1100&q=85" alt="Arcade con luces de neón">
+          <span class="plan-content"><span class="tag">MODO JUEGO</span><h3>Boomerang Arcade</h3><p>Una tarde de juegos, retos y muchas risas.</p></span>
+        </button>
+        <button class="plan" type="button" onclick="choose('Corea Grill','Corea Grill')">
+          <img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1100&q=85" alt="Comida coreana preparada en una mesa">
+          <span class="plan-content"><span class="tag">SABOR COREANO</span><h3>Corea Grill</h3><p>Una cena deliciosa para platicar y pasarla bien.</p></span>
+        </button>
+      </div>
+    </section>
+
+    <section id="done" class="screen confirmation">
+      <p class="eyebrow">¡Plan elegido!</p>
+      <h2 id="choice-title"></h2>
+      <p>Al tocar el botón se abrirá WhatsApp con el mensaje listo para enviar, incluyendo el lugar elegido.</p>
+      <p id="choice-location" class="location"></p>
+      <button class="send" type="button" onclick="sendWhatsApp()">Enviar por WhatsApp</button>
+      <button class="back" type="button" onclick="showPlans()">Cambiar de plan</button>
+    </section>
+  </main>
+  <script>
+    // Sustituye por tu número, con código de país y sin +, espacios o guiones. Ej.: 5218681234567
+    const WHATSAPP_NUMBER = '528787019326';
+    let selectedPlan = '';
+    const nextSaturday = () => { const d = new Date(), offset = (6 - d.getDay() + 7) % 7 || 7; d.setDate(d.getDate() + offset); return d; };
+    const dateText = new Intl.DateTimeFormat('es-MX', { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(nextSaturday());
+    document.getElementById('saturday').textContent = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+    function display(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function showPlans() { display('plans'); }
+    function choose(plan, location) { selectedPlan = plan; document.getElementById('choice-title').textContent = plan; document.getElementById('choice-location').textContent = 'Ubicación: ' + location; display('done'); }
+    function sendWhatsApp() {
+      const message = `¡Elegí ${selectedPlan} para el sábado (${dateText})!\nUbicación: ${selectedPlan}`;
+      const number = WHATSAPP_NUMBER.replace(/\D/g, '');
+      window.open(number && number !== 'TU_NUMERO_AQUI' ? `https://wa.me/${number}?text=${encodeURIComponent(message)}` : `https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
